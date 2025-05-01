@@ -85,6 +85,7 @@
             // 
             listBoxFile.Dock = DockStyle.Fill;
             listBoxFile.FormattingEnabled = true;
+            listBoxFile.DrawMode = DrawMode.OwnerDrawFixed;
             listBoxFile.Location = new Point(3, 108);
             listBoxFile.Name = "listBoxFile";
             listBoxFile.Size = new Size(457, 976);

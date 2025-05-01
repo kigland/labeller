@@ -14,7 +14,6 @@ public partial class frmColourLabeller : Form
         var curItem = listBoxFile.SelectedItem as FileObj;
         picBox.Image = Image.FromFile(curItem.Path);
         picBox.SizeMode = PictureBoxSizeMode.Zoom;
-
     }
 
     Color curColour;
@@ -66,16 +65,14 @@ public partial class frmColourLabeller : Form
 
         if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath)) return;
 
-        fileLists = Directory.GetFiles(fbd.SelectedPath).Where(x => (x.EndsWith(".png") || x.EndsWith(".jpg") || x.EndsWith("jpeg"))).ToArray();
+        fileLists = Directory.GetFiles(fbd.SelectedPath).Where(x => {
+            x = x.ToLower();
+            return x.EndsWith(".png") || x.EndsWith(".jpg") || x.EndsWith("jpeg");
+        }).ToArray();
         foreach (var f in fileLists)
         {
             listBoxFile.Items.Add(new FileObj(f));
         }
-        foreach (var i in listBoxFile.Items)
-        {
-            // COlour the list box item via haslabel
-        }
-        MessageBox.Show("Files found: " + fileLists.Length.ToString(), "Message");
     }
 
     private void frmColourLabeller_KeyDown(object sender, KeyEventArgs e)
@@ -130,7 +127,7 @@ class FileObj
             var stems = fi.Name.Split('.');
             var list = new List<string>(stems);
             list.RemoveAt(list.Count - 1);
-            Txt = global::System.IO.Path.Join(fi.Directory.FullName, string.Join(".", list));
+            Txt = global::System.IO.Path.Join(fi.Directory.FullName, string.Join(".", list)+".txt");
         }
 
     }
