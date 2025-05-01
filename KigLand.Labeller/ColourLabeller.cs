@@ -98,7 +98,7 @@ public partial class frmColourLabeller : Form
                         listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
                     }
                     curItem.Colours.Add(curColour);
-                    File.WriteAllLines(curItem.Txt, curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
+                    curItem.SaveTxt();
                 }
                 break;
             case Keys.A:
@@ -125,21 +125,10 @@ public partial class frmColourLabeller : Form
         e.DrawBackground();
 
         var fileObj = listBoxFile.Items[e.Index] as FileObj;
-        Brush textBrush;
-
-        if (fileObj.HasLabel)
-        {
-            // Use a different color for files that have labels
-            textBrush = new SolidBrush(Color.Green);
-        }
-        else
-        {
-            textBrush = new SolidBrush(Color.Red);//e.ForeColor);
-        }
+        Brush textBrush = fileObj.HasLabel ? new SolidBrush(Color.Green) : new SolidBrush(Color.Red);
 
         e.Graphics.DrawString(fileObj.ToString(), e.Font, textBrush, e.Bounds);
 
-        // Draw focus rectangle if item is selected
         if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
             e.DrawFocusRectangle();
     }
@@ -163,6 +152,12 @@ class FileObj
         }
         RefreshTxt();
 
+    }
+
+    public void SaveTxt()
+    {
+        if (Colours == null) return;
+        File.WriteAllLines(Txt, Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
     }
 
     public List<Color> Colours { get; set; }
@@ -197,7 +192,7 @@ class FileObj
     {
         get
         {
-            return File.Exists(this.Txt);
+            return File.Exists(this.Txt) && File.ReadAllLines(this.Txt).Length > 0;
         }
     }
 
