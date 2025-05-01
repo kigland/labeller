@@ -80,7 +80,7 @@ public partial class frmColourLabeller : Form
         {
             listBoxFile.Items.Add(new FileObj(f));
         }
-        lblCount.Text = fileLists.Length.ToString();
+        refreshCount();
     }
 
     private void frmColourLabeller_KeyDown(object sender, KeyEventArgs e)
@@ -88,10 +88,12 @@ public partial class frmColourLabeller : Form
         switch (e.KeyCode)
         {
             case Keys.Enter:
+            case Keys.Space:
                 if (curItem == null) return;
                 if (curItem.Colours == null) {
                     curItem.Colours = new List<Color>();
                     listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
+                    refreshCount();
                 }
                 if (curItem.AddColour(curColour)) {
                     refreshListBoxColours();
@@ -122,6 +124,12 @@ public partial class frmColourLabeller : Form
         if (curItem != null && curItem.Colours != null) {
             listBoxColours.Items.AddRange(curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
         }
+    }
+
+    private void refreshCount() {
+        var count = listBoxFile.Items.Count;
+        var done = listBoxFile.Items.Cast<FileObj>().Where(x => x.HasLabel).Count();
+        lblCount.Text = $"done: {done}/{count}";
     }
 
 
