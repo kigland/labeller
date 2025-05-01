@@ -13,6 +13,8 @@ public partial class frmColourLabeller : Form
     private void listBoxFile_SelectedIndexChanged(object sender, EventArgs e)
     {
         curItem = listBoxFile.SelectedItem as FileObj;
+        if (curItem == null) return;
+        curItem.RefreshTxt();
         picBox.Image = Image.FromFile(curItem.Path);
         picBox.SizeMode = PictureBoxSizeMode.Zoom;
         listBoxColours.Items.Clear();
@@ -155,6 +157,21 @@ class FileObj
             list.RemoveAt(list.Count - 1);
             Txt = global::System.IO.Path.Join(fi.Directory.FullName, string.Join(".", list) + ".txt");
         }
+        RefreshTxt();
+
+    }
+
+    public List<Color> Colours { get; set; }
+
+    public string BasePath { get; set; }
+
+    public string Path { get; set; }
+
+    public string Name { get; set; }
+    public string Txt { get; set; }
+
+    public void RefreshTxt()
+    {
         if (File.Exists(Txt))
         {
             var colours = File.ReadAllLines(Txt).Select<string, Color?>(x =>
@@ -170,17 +187,7 @@ class FileObj
             }).ToArray();
             Colours = colours.Where(x => x != null).Select(c => c.Value).ToList();
         }
-
     }
-
-    public List<Color> Colours { get; set; }
-
-    public string BasePath { get; set; }
-
-    public string Path { get; set; }
-
-    public string Name { get; set; }
-    public string Txt { get; set; }
 
     public bool HasLabel
     {
