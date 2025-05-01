@@ -9,20 +9,19 @@ public partial class frmColourLabeller : Form
         InitializeComponent();
     }
 
-    FileObj curItem;
+    FileObj curItem {
+        get {
+            return listBoxFile.SelectedItem as FileObj;
+        }
+    }
     private void listBoxFile_SelectedIndexChanged(object sender, EventArgs e)
     {
-        curItem = listBoxFile.SelectedItem as FileObj;
         if (curItem == null) return;
         curItem.RefreshTxt();
         listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
         picBox.Image = Image.FromFile(curItem.Path);
         picBox.SizeMode = PictureBoxSizeMode.Zoom;
-        listBoxColours.Items.Clear();
-        if (curItem.Colours != null && curItem.Colours.Count > 0)
-        {
-            listBoxColours.Items.AddRange(curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
-        }
+        refreshListBoxColours();
     }
 
     Color curColour;
@@ -92,13 +91,13 @@ public partial class frmColourLabeller : Form
             case Keys.Enter:
                 if (curItem != null)
                 {
-                    listBoxColours.Items.Add(curColour);
                     if (curItem.Colours == null) {
                         curItem.Colours = new List<Color>();
                         listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
                     }
                     curItem.Colours.Add(curColour);
                     curItem.SaveTxt();
+                    refreshListBoxColours();
                 }
                 break;
             case Keys.A:
@@ -113,6 +112,13 @@ public partial class frmColourLabeller : Form
                 idx = Math.Min(listBoxFile.Items.Count - 1, idx + 1);
                 listBoxFile.SelectedIndex = idx;
                 break;
+        }
+    }
+
+    private void refreshListBoxColours() {
+        listBoxColours.Items.Clear();
+        if (curItem != null && curItem.Colours != null) {
+            listBoxColours.Items.AddRange(curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
         }
     }
 
