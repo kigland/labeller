@@ -15,6 +15,7 @@ public partial class frmColourLabeller : Form
         curItem = listBoxFile.SelectedItem as FileObj;
         if (curItem == null) return;
         curItem.RefreshTxt();
+        listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
         picBox.Image = Image.FromFile(curItem.Path);
         picBox.SizeMode = PictureBoxSizeMode.Zoom;
         listBoxColours.Items.Clear();
@@ -92,7 +93,10 @@ public partial class frmColourLabeller : Form
                 if (curItem != null)
                 {
                     listBoxColours.Items.Add(curColour);
-                    if (curItem.Colours == null) curItem.Colours = new List<Color>();
+                    if (curItem.Colours == null) {
+                        curItem.Colours = new List<Color>();
+                        listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
+                    }
                     curItem.Colours.Add(curColour);
                     File.WriteAllLines(curItem.Txt, curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
                 }
