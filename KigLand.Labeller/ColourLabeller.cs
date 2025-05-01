@@ -87,9 +87,25 @@ public partial class frmColourLabeller : Form
         switch (e.KeyCode)
         {
             case Keys.Enter:
-                listBoxColours.Items.Add(curColour);
-                curItem.Colours.Add(curColour);
-                File.WriteAllLines(curItem.Txt, curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
+                if (curItem != null)
+                {
+                    listBoxColours.Items.Add(curColour);
+                    if (curItem.Colours == null) curItem.Colours = new List<Color>();
+                    curItem.Colours.Add(curColour);
+                    File.WriteAllLines(curItem.Txt, curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
+                }
+                break;
+            case Keys.A:
+                var idx = listBoxFile.SelectedIndex;
+                if (idx == -1) idx = 0;
+                idx = Math.Max(0, idx - 1);
+                listBoxFile.SelectedIndex = idx;
+                break;
+            case Keys.D:
+                idx = listBoxFile.SelectedIndex;
+                if (idx == -1) idx = 0;
+                idx = Math.Min(listBoxFile.Items.Count - 1, idx + 1);
+                listBoxFile.SelectedIndex = idx;
                 break;
         }
     }
