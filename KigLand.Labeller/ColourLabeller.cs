@@ -9,11 +9,17 @@ public partial class frmColourLabeller : Form
         InitializeComponent();
     }
 
+    FileObj curItem;
     private void listBoxFile_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var curItem = listBoxFile.SelectedItem as FileObj;
+        curItem = listBoxFile.SelectedItem as FileObj;
         picBox.Image = Image.FromFile(curItem.Path);
         picBox.SizeMode = PictureBoxSizeMode.Zoom;
+        listBoxColours.Items.Clear();
+        if (curItem.Colours != null && curItem.Colours.Count > 0)
+        {
+            listBoxColours.Items.AddRange(curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
+        }
     }
 
     Color curColour;
@@ -65,7 +71,8 @@ public partial class frmColourLabeller : Form
 
         if (result != DialogResult.OK || string.IsNullOrWhiteSpace(fbd.SelectedPath)) return;
 
-        fileLists = Directory.GetFiles(fbd.SelectedPath).Where(x => {
+        fileLists = Directory.GetFiles(fbd.SelectedPath).Where(x =>
+        {
             x = x.ToLower();
             return x.EndsWith(".png") || x.EndsWith(".jpg") || x.EndsWith("jpeg");
         }).ToArray();
@@ -81,9 +88,12 @@ public partial class frmColourLabeller : Form
         {
             case Keys.Enter:
                 listBoxColours.Items.Add(curColour);
+                curItem.Colours.Add(curColour);
+                File.WriteAllLines(curItem.Txt, curItem.Colours.Select(c => $"{c.R},{c.G},{c.B}").ToArray());
                 break;
         }
     }
+
 
     private void listBoxFile_DrawItem(object sender, DrawItemEventArgs e)
     {
@@ -127,10 +137,27 @@ class FileObj
             var stems = fi.Name.Split('.');
             var list = new List<string>(stems);
             list.RemoveAt(list.Count - 1);
-            Txt = global::System.IO.Path.Join(fi.Directory.FullName, string.Join(".", list)+".txt");
+            Txt = global::System.IO.Path.Join(fi.Directory.FullName, string.Join(".", list) + ".txt");
+        }
+        if (File.Exists(Txt))
+        {
+            var colours = File.ReadAllLines(Txt).Select<string, Color?>(x =>
+            {
+                x = x.Trim();
+                if (string.IsNullOrWhiteSpace(x)) return null;
+                try
+                {
+                    var split = x.Split(',');
+                    return Color.FromArgb(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]));
+                }
+                catch (Exception ex) { MessageBox.Show($"Error reading colour: {ex.Message}", "Error"); return null; }
+            }).ToArray();
+            Colours = colours.Where(x => x != null).Select(c => c.Value).ToList();
         }
 
     }
+
+    public List<Color> Colours { get; set; }
 
     public string BasePath { get; set; }
 
