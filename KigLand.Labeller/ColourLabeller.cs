@@ -89,15 +89,13 @@ public partial class frmColourLabeller : Form
         switch (e.KeyCode)
         {
             case Keys.Enter:
-                if (curItem != null)
-                {
-                    if (curItem.Colours == null) {
-                        curItem.Colours = new List<Color>();
-                        listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
-                    }
-                    if (curItem.AddColour(curColour)) {
-                        refreshListBoxColours();
-                    }
+                if (curItem == null) return;
+                if (curItem.Colours == null) {
+                    curItem.Colours = new List<Color>();
+                    listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
+                }
+                if (curItem.AddColour(curColour)) {
+                    refreshListBoxColours();
                 }
                 break;
             case Keys.A:
@@ -111,6 +109,11 @@ public partial class frmColourLabeller : Form
                 if (idx == -1) idx = 0;
                 idx = Math.Min(listBoxFile.Items.Count - 1, idx + 1);
                 listBoxFile.SelectedIndex = idx;
+                break;
+            case Keys.W:
+                if (listBoxColours.SelectedIndex <0) return;
+                listBoxColours.Items.RemoveAt(listBoxColours.SelectedIndex);
+                curItem.SetColours(listBoxColours.Items.Cast<string>().Select(x => Color.FromArgb(int.Parse(x.Split(',')[0]), int.Parse(x.Split(',')[1]), int.Parse(x.Split(',')[2]))).ToList());
                 break;
         }
     }
@@ -208,6 +211,24 @@ class FileObj
         return false;
     }
 
+    public void SetColours(List<Color> colours) {
+        _setColours(colours);
+        SaveTxt();
+    }
+
+    private void _setColours(List<Color> colours) {
+        Colours = colours?.Distinct(new ColorEqualityComparer()).ToList();
+    }
+
+    private class ColorEqualityComparer : IEqualityComparer<Color>
+    {
+        public bool Equals(Color x, Color y)
+        => x.R == y.R && x.G == y.G && x.B == y.B;
+
+        public int GetHashCode(Color obj)
+        => HashCode.Combine(obj.R, obj.G, obj.B);
+    }
+
     public void SaveTxt()
     {
         if (Colours == null) return;
@@ -238,7 +259,7 @@ class FileObj
                 }
                 catch (Exception ex) { MessageBox.Show($"Error reading colour: {ex.Message}", "Error"); return null; }
             }).ToArray();
-            Colours = colours.Where(x => x != null).Select(c => c.Value).ToList();
+            _setColours(colours.Where(x => x != null).Select(c => c.Value).ToList());
         }
     }
 
