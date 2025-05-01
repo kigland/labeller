@@ -95,8 +95,9 @@ public partial class frmColourLabeller : Form
                         curItem.Colours = new List<Color>();
                         listBoxFile.Invalidate(listBoxFile.GetItemRectangle(listBoxFile.SelectedIndex));
                     }
-                    curItem.AddColour(curColour);
-                    refreshListBoxColours();
+                    if (curItem.AddColour(curColour)) {
+                        refreshListBoxColours();
+                    }
                 }
                 break;
             case Keys.A:
@@ -197,12 +198,14 @@ class FileObj
 
     }
 
-    public void AddColour(Color colour) {
+    public bool AddColour(Color colour) {
         if (Colours == null) Colours = new List<Color>();
         if (!Colours.Any(c => c.R == colour.R && c.G == colour.G && c.B == colour.B)) {
             Colours.Add(colour);
             SaveTxt();
+            return true;
         }
+        return false;
     }
 
     public void SaveTxt()
