@@ -132,6 +132,44 @@ public partial class frmColourLabeller : Form
         if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
             e.DrawFocusRectangle();
     }
+
+    private void listBoxColours_DrawItem(object sender, DrawItemEventArgs e)
+    {
+        if (e.Index < 0) return;
+
+        e.DrawBackground();
+
+        // Get the color string from the listbox
+        string colorStr = listBoxColours.Items[e.Index].ToString();
+        
+        // Parse the RGB values
+        string[] rgb = colorStr.Split(',');
+        if (rgb.Length == 3 && int.TryParse(rgb[0], out int r) && 
+            int.TryParse(rgb[1], out int g) && 
+            int.TryParse(rgb[2], out int b))
+        {
+            // Create color and brushes
+            Color itemColor = Color.FromArgb(r, g, b);
+            using var colorBrush = new SolidBrush(itemColor);
+            using var textBrush = new SolidBrush(Color.Black);
+
+            // Draw color rectangle
+            int colorBoxWidth = 50;
+            var colorRect = new Rectangle(e.Bounds.X + 2, e.Bounds.Y + 2, 
+                                       colorBoxWidth, e.Bounds.Height - 4);
+            e.Graphics.FillRectangle(colorBrush, colorRect);
+            e.Graphics.DrawRectangle(Pens.Black, colorRect);
+
+            // Draw RGB text
+            var textRect = new Rectangle(e.Bounds.X + colorBoxWidth + 5, e.Bounds.Y,
+                                       e.Bounds.Width - colorBoxWidth - 5, e.Bounds.Height);
+            e.Graphics.DrawString(colorStr, e.Font, textBrush, textRect, 
+                                StringFormat.GenericDefault);
+        }
+
+        if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            e.DrawFocusRectangle();
+    }
 }
 
 class FileObj

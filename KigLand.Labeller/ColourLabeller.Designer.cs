@@ -91,6 +91,8 @@
             listBoxFile.Size = new Size(457, 976);
             listBoxFile.TabIndex = 4;
             listBoxFile.DrawItem += listBoxFile_DrawItem;
+            listBoxColours.DrawMode = DrawMode.OwnerDrawFixed;
+            listBoxColours.DrawItem += listBoxColours_DrawItem;
             listBoxFile.SelectedIndexChanged += listBoxFile_SelectedIndexChanged;
             // 
             // tableLayoutPanel1
