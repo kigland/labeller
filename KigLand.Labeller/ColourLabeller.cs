@@ -80,6 +80,7 @@ public partial class frmColourLabeller : Form
         {
             listBoxFile.Items.Add(new FileObj(f));
         }
+        lblCount.Text = fileLists.Length.ToString();
     }
 
     private void frmColourLabeller_KeyDown(object sender, KeyEventArgs e)

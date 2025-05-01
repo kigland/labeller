@@ -37,10 +37,12 @@
             flowLayoutPanel1 = new FlowLayoutPanel();
             listBoxColours = new ListBox();
             flowLayoutPanel2 = new FlowLayoutPanel();
+            lblCount = new Label();
             ((System.ComponentModel.ISupportInitialize)picBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)colourBox).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
+            flowLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // picBox
@@ -64,11 +66,13 @@
             // lblColour
             // 
             lblColour.AutoSize = true;
+            lblColour.Dock = DockStyle.Fill;
             lblColour.Location = new Point(91, 0);
             lblColour.Name = "lblColour";
-            lblColour.Size = new Size(187, 39);
+            lblColour.Size = new Size(187, 86);
             lblColour.TabIndex = 2;
             lblColour.Text = "Colour Result";
+            lblColour.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // btnOpen
             // 
@@ -84,15 +88,13 @@
             // listBoxFile
             // 
             listBoxFile.Dock = DockStyle.Fill;
-            listBoxFile.FormattingEnabled = true;
             listBoxFile.DrawMode = DrawMode.OwnerDrawFixed;
+            listBoxFile.FormattingEnabled = true;
             listBoxFile.Location = new Point(3, 108);
             listBoxFile.Name = "listBoxFile";
             listBoxFile.Size = new Size(457, 976);
             listBoxFile.TabIndex = 4;
             listBoxFile.DrawItem += listBoxFile_DrawItem;
-            listBoxColours.DrawMode = DrawMode.OwnerDrawFixed;
-            listBoxColours.DrawItem += listBoxColours_DrawItem;
             listBoxFile.SelectedIndexChanged += listBoxFile_SelectedIndexChanged;
             // 
             // tableLayoutPanel1
@@ -129,23 +131,38 @@
             // listBoxColours
             // 
             listBoxColours.Dock = DockStyle.Fill;
+            listBoxColours.DrawMode = DrawMode.OwnerDrawFixed;
             listBoxColours.FormattingEnabled = true;
             listBoxColours.Location = new Point(2191, 108);
             listBoxColours.Name = "listBoxColours";
             listBoxColours.Size = new Size(390, 976);
             listBoxColours.TabIndex = 6;
+            listBoxColours.DrawItem += listBoxColours_DrawItem;
             // 
             // flowLayoutPanel2
             // 
+            flowLayoutPanel2.Controls.Add(lblCount);
             flowLayoutPanel2.Location = new Point(2191, 3);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
             flowLayoutPanel2.Size = new Size(390, 99);
             flowLayoutPanel2.TabIndex = 7;
             // 
+            // lblCount
+            // 
+            lblCount.AutoSize = true;
+            lblCount.Dock = DockStyle.Fill;
+            lblCount.Location = new Point(3, 0);
+            lblCount.Name = "lblCount";
+            lblCount.Size = new Size(91, 39);
+            lblCount.TabIndex = 3;
+            lblCount.Text = "Count";
+            lblCount.TextAlign = ContentAlignment.MiddleLeft;
+            // 
             // frmColourLabeller
             // 
             AutoScaleDimensions = new SizeF(16F, 39F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.Window;
             ClientSize = new Size(2584, 1087);
             Controls.Add(tableLayoutPanel1);
             KeyPreview = true;
@@ -157,6 +174,8 @@
             tableLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.ResumeLayout(false);
             flowLayoutPanel1.PerformLayout();
+            flowLayoutPanel2.ResumeLayout(false);
+            flowLayoutPanel2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -171,5 +190,6 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private ListBox listBoxColours;
         private FlowLayoutPanel flowLayoutPanel2;
+        private Label lblCount;
     }
 }
