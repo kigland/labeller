@@ -10,9 +10,7 @@ public partial class frmColourLabeller : Form
     }
 
     FileObj curItem {
-        get {
-            return listBoxFile.SelectedItem as FileObj;
-        }
+        get => listBoxFile.SelectedItem as FileObj;
     }
     private void listBoxFile_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -203,12 +201,12 @@ class FileObj
 
     public bool AddColour(Color colour) {
         if (Colours == null) Colours = new List<Color>();
-        if (!Colours.Any(c => c.R == colour.R && c.G == colour.G && c.B == colour.B)) {
-            Colours.Add(colour);
-            SaveTxt();
-            return true;
+        if (Colours.Any(c => c.R == colour.R && c.G == colour.G && c.B == colour.B)) {
+            return false;
         }
-        return false;
+        Colours.Add(colour);
+        SaveTxt();
+        return true;
     }
 
     public void SetColours(List<Color> colours) {
@@ -246,33 +244,26 @@ class FileObj
 
     public void RefreshTxt()
     {
-        if (File.Exists(Txt))
+        if (!File.Exists(Txt)) return;
+        var colours = File.ReadAllLines(Txt).Select<string, Color?>(x =>
         {
-            var colours = File.ReadAllLines(Txt).Select<string, Color?>(x =>
+            x = x.Trim();
+            if (string.IsNullOrWhiteSpace(x)) return null;
+            try
             {
-                x = x.Trim();
-                if (string.IsNullOrWhiteSpace(x)) return null;
-                try
-                {
-                    var split = x.Split(',');
-                    return Color.FromArgb(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]));
-                }
-                catch (Exception ex) { MessageBox.Show($"Error reading colour: {ex.Message}", "Error"); return null; }
-            }).ToArray();
-            _setColours(colours.Where(x => x != null).Select(c => c.Value).ToList());
-        }
+                var split = x.Split(',');
+                return Color.FromArgb(int.Parse(split[0]), int.Parse(split[1]), int.Parse(split[2]));
+            }
+            catch (Exception ex) { MessageBox.Show($"Error reading colour: {ex.Message}", "Error"); return null; }
+        }).ToArray();
+        _setColours(colours.Where(x => x != null).Select(c => c.Value).ToList());
+        
     }
 
     public bool HasLabel
     {
-        get
-        {
-            return File.Exists(this.Txt) && File.ReadAllLines(this.Txt).Length > 0;
-        }
+        get => File.Exists(this.Txt) && File.ReadAllLines(this.Txt).Length > 0;
     }
 
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 }
