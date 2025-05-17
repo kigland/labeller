@@ -76,6 +76,7 @@ public partial class frmColourLabeller : Form
             x = x.ToLower();
             return x.EndsWith(".png") || x.EndsWith(".jpg") || x.EndsWith("jpeg");
         }).ToArray();
+        listBoxFile.Items.Clear();
         foreach (var f in fileLists)
         {
             listBoxFile.Items.Add(new FileObj(f));
@@ -112,6 +113,8 @@ public partial class frmColourLabeller : Form
                 listBoxFile.SelectedIndex = idx;
                 break;
             case Keys.W:
+            case Keys.X:
+            case Keys.Q:
                 if (listBoxColours.SelectedIndex <0) return;
                 listBoxColours.Items.RemoveAt(listBoxColours.SelectedIndex);
                 curItem.SetColours(listBoxColours.Items.Cast<string>().Select(x => Color.FromArgb(int.Parse(x.Split(',')[0]), int.Parse(x.Split(',')[1]), int.Parse(x.Split(',')[2]))).ToList());
